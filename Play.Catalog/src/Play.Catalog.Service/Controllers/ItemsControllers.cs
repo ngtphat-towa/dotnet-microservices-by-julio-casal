@@ -8,6 +8,13 @@ namespace Play.Catalog.Service.Controllers
     [Route("items")]
     public class ItemsController : ControllerBase
     {
+        private readonly ILogger<ItemsController> _logger;
+
+        public ItemsController(ILogger<ItemsController> logger)
+        {
+            _logger = logger;
+        }
+
         // TODO: Replace with database services
         private static readonly List<ItemDTO> items = new(){
             new ItemDTO(Id: Guid.NewGuid(),Name: "Item 1", Description: "Description 1",Price: 5,CreatedDate: DateTimeOffset.UtcNow),
