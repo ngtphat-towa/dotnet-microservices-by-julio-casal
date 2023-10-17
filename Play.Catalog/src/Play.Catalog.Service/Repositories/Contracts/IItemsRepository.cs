@@ -1,6 +1,6 @@
 using Play.Catalog.Service.Entities;
 
-namespace Play.Catalog.Service.Repositories.Contracts;
+namespace Play.Catalog.Service.Repositories;
 
 public interface IItemsRepository
 {

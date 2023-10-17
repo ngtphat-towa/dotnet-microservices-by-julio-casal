@@ -1,8 +1,6 @@
 using System.Data.Common;
 using MongoDB.Driver;
 using Play.Catalog.Service.Entities;
-using Play.Catalog.Service.Repositories.Contracts;
-
 namespace Play.Catalog.Service.Repositories;
 
 public class ItemsRepository : IItemsRepository
