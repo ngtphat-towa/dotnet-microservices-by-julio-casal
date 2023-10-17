@@ -4,9 +4,9 @@ namespace Play.Catalog.Service.Repositories;
 
 public interface IItemsRepository
 {
-    Task<IReadOnlyCollection<Item>> GetAll();
-    Task<Item> Get(Guid id);
-    Task<Item> Create(Item entity);
-    Task<Item> Update(Item entity);
-    Task Remove(Guid id);
+    Task<IReadOnlyCollection<Item>> GetAllAsync();
+    Task<Item> GetByIdAsync(Guid id);
+    Task<Item> CreateAsync(Item entity);
+    Task<Item> UpdateAsync(Item entity);
+    Task RemoveAsync(Guid id);
 }

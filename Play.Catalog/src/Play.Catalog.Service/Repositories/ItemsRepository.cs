@@ -20,18 +20,18 @@ public class ItemsRepository : IItemsRepository
     }
 
 
-    public async Task<IReadOnlyCollection<Item>> GetAll()
+    public async Task<IReadOnlyCollection<Item>> GetAllAsync()
     {
         return await _dbCollection.Find(_filterBuilder.Empty).ToListAsync();
     }
 
-    public async Task<Item> Get(Guid id)
+    public async Task<Item> GetByIdAsync(Guid id)
     {
         FilterDefinition<Item> filter = _filterBuilder.Eq("Id", id);
         return await _dbCollection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task<Item> Create(Item entity)
+    public async Task<Item> CreateAsync(Item entity)
     {
         if (entity == null)
         {
@@ -42,7 +42,7 @@ public class ItemsRepository : IItemsRepository
 
         return entity;
     }
-    public async Task<Item> Update(Item entity)
+    public async Task<Item> UpdateAsync(Item entity)
     {
         if (entity == null)
         {
@@ -54,7 +54,7 @@ public class ItemsRepository : IItemsRepository
 
         return entity;
     }
-    public async Task Remove(Guid id)
+    public async Task RemoveAsync(Guid id)
     {
         FilterDefinition<Item> filter = _filterBuilder.Eq("Id", id);
         await _dbCollection.DeleteOneAsync(filter);
