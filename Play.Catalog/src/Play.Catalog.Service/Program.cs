@@ -1,24 +1,21 @@
 
 using MongoDB.Driver;
+using Play.Catalog.Service.Entities;
+using Play.Catalog.Service.Extensions;
 using Play.Catalog.Service.Repositories;
 using Play.Catalog.Service.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Services: Configurations
-Play.Catalog.Service.Configurations.MongoDbConfig.RegisterSerializers();
+
 
 // Services: Dependencies
 ServiceSettings serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
 
-builder.Services.AddSingleton(serviceProvider =>
-{
-    var mongoDbSetting = builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-    var mongoClient = new MongoClient(mongoDbSetting.ConnectionString);
-    return mongoClient.GetDatabase(serviceSettings.ServiceName);
-});
-builder.Services.AddSingleton<IItemsRepository, ItemsRepository>();
+builder.Services
+    .AddMongoDatabase()
+    .AddMongoRepository<Item>("items");
 
 /// Services: Controllers
 builder.Services.AddControllers(
