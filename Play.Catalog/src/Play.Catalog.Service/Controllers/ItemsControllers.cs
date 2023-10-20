@@ -13,10 +13,11 @@ namespace Play.Catalog.Service.Controllers
         private readonly ILogger<ItemsController> _logger;
         private readonly IItemsRepository _itemsRepository;
 
-        public ItemsController(ILogger<ItemsController> logger)
+        public ItemsController(ILogger<ItemsController> logger,
+                               IItemsRepository itemsRepository)
         {
             _logger = logger;
-            _itemsRepository = new ItemsRepository();
+            _itemsRepository = itemsRepository;
         }
 
         [HttpGet]

@@ -6,16 +6,13 @@ namespace Play.Catalog.Service.Repositories;
 public class ItemsRepository : IItemsRepository
 {
 
-    private const string _dbName = "Catalog";
     private const string _collectionName = "items";
     private readonly IMongoCollection<Item> _dbCollection;
-    private const string _connectionString = "mongodb://localhost:27017";
     private readonly FilterDefinitionBuilder<Item> _filterBuilder = Builders<Item>.Filter;
 
-    public ItemsRepository()
+    public ItemsRepository(IMongoDatabase database)
     {
-        var mongoClient = new MongoClient(_connectionString);
-        var database = mongoClient.GetDatabase(_dbName);
+
         _dbCollection = database.GetCollection<Item>(_collectionName);
     }
 

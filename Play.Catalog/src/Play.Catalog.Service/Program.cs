@@ -1,17 +1,34 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
+
+using MongoDB.Driver;
+using Play.Catalog.Service.Repositories;
+using Play.Catalog.Service.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
-BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+
+// Services: Configurations
+Play.Catalog.Service.Configurations.MongoDbConfig.RegisterSerializers();
+
+// Services: Dependencies
+ServiceSettings serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var mongoDbSetting = builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+    var mongoClient = new MongoClient(mongoDbSetting.ConnectionString);
+    return mongoClient.GetDatabase(serviceSettings.ServiceName);
+});
+builder.Services.AddSingleton<IItemsRepository, ItemsRepository>();
+
+/// Services: Controllers
 builder.Services.AddControllers(
     options => { options.SuppressAsyncSuffixInActionNames = false; }
 );
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+/// Services: EndpointsApiExplorer
 builder.Services.AddEndpointsApiExplorer();
+
+/// Services: SwaggerGen
 builder.Services.AddSwaggerGen(
     c => c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
