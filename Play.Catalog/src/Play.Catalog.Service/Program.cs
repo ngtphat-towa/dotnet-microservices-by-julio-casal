@@ -1,9 +1,9 @@
 
 using MongoDB.Driver;
 using Play.Catalog.Service.Entities;
-using Play.Catalog.Service.Extensions;
-using Play.Catalog.Service.Repositories;
-using Play.Catalog.Service.Settings;
+using Play.Common.Extensions;
+using Play.Common.Settings;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Services: Dependencies
-ServiceSettings serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
 
 builder.Services
     .AddMongoDatabase()
