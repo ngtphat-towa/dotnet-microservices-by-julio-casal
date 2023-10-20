@@ -37,9 +37,9 @@ namespace Play.Catalog.Service.Controllers
             }
             return item.AsDTO();
         }
-        // POST /items/{:id}
-        [HttpPost("{id}")]
-        public async Task<IActionResult> PostAsync(CreateItemDTO createItemDTO)
+        // POST /items/
+        [HttpPost]
+        public async Task<ActionResult<ItemDTO>> PostAsync(CreateItemDTO createItemDTO)
         {
             var item = new Item
             {
