@@ -1,3 +1,4 @@
+using Polly;
 using Play.Common.Extensions;
 using Play.Common.Settings;
 using Play.Inventory.Service.Clients;
@@ -16,7 +17,8 @@ var url = builder.Configuration.GetValue<string>("CatalogEndpoint:BaseUrl")!;
 builder.Services.AddHttpClient<CatalogClient>(client =>
            {
                client.BaseAddress = new Uri(url);
-           });
+           })
+           .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
 
 // Add services to the container.
 
