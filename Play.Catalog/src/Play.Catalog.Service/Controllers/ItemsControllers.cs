@@ -1,4 +1,6 @@
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using Play.Catalog.Service.Contracts;
 using Play.Catalog.Service.DTOs;
 using Play.Catalog.Service.Entities;
 using Play.Catalog.Service.Extensions;
@@ -13,12 +15,15 @@ namespace Play.Catalog.Service.Controllers
     {
         private readonly ILogger<ItemsController> _logger;
         private readonly IRepository<Item> _itemsRepository;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         public ItemsController(ILogger<ItemsController> logger,
-                               IRepository<Item> itemsRepository)
+                               IRepository<Item> itemsRepository,
+                               IPublishEndpoint publishEndpoint)
         {
             _logger = logger;
             _itemsRepository = itemsRepository;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet]
@@ -53,11 +58,9 @@ namespace Play.Catalog.Service.Controllers
             };
 
             await _itemsRepository.CreateAsync(item);
-            return CreatedAtAction(nameof(GetByIdAsync),
-            new
-            {
-                id = item.Id
-            }, item);
+
+            await _publishEndpoint.Publish(new CatalogItemCreated(ItemId: item.Id, Name: item.Name, Description: item.Description));
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
         }
         // PUT /items/{:id}
         [HttpPut("{id}")]
@@ -85,6 +88,7 @@ namespace Play.Catalog.Service.Controllers
                 return NotFound();
             }
             await _itemsRepository.RemoveAsync(id);
+            await _publishEndpoint.Publish(new CatalogItemDeleted(ItemId: id));
             return Ok();
         }
     }
