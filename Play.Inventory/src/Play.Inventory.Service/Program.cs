@@ -1,4 +1,15 @@
+using Play.Common.Extensions;
+using Play.Common.Settings;
+using Play.Inventory.Service.Entites;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Services: Dependencies
+var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+
+builder.Services
+    .AddMongoDatabase()
+    .AddMongoRepository<InventoryItem>("inventoryitems");
 
 // Add services to the container.
 
