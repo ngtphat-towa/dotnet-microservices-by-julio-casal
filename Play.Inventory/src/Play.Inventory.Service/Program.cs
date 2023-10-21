@@ -13,12 +13,8 @@ builder.Services
     .AddMongoDatabase()
     .AddMongoRepository<InventoryItem>("inventoryitems");
 
-var url = builder.Configuration.GetValue<string>("CatalogEndpoint:BaseUrl")!;
-builder.Services.AddHttpClient<CatalogClient>(client =>
-           {
-               client.BaseAddress = new Uri(url);
-           })
-           .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
+
+builder.Services.AddCatalogClient(builder.Configuration);
 
 // Add services to the container.
 
