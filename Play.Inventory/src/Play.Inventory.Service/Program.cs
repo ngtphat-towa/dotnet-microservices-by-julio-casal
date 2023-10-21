@@ -1,5 +1,6 @@
 using Play.Common.Extensions;
 using Play.Common.Settings;
+using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Entites;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,12 @@ var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).
 builder.Services
     .AddMongoDatabase()
     .AddMongoRepository<InventoryItem>("inventoryitems");
+
+var url = builder.Configuration.GetValue<string>("CatalogEndpoint:BaseUrl")!;
+builder.Services.AddHttpClient<CatalogClient>(client =>
+           {
+               client.BaseAddress = new Uri(url);
+           });
 
 // Add services to the container.
 
