@@ -11,17 +11,18 @@ namespace Play.Inventory.Service.Controllers;
 [Route("items")]
 public class ItemsController : ControllerBase
 {
-    private readonly IRepository<InventoryItem> _itemsRepository;
+    private readonly IRepository<InventoryItem> _inventoryItemsRepository;
+    private readonly IRepository<CatalogItem> _catalogItemsRepository;
     private readonly ILogger<ItemsController> _logger;
-    private readonly CatalogClient _catalogClient;
+
 
     public ItemsController(ILogger<ItemsController> logger,
-                           IRepository<InventoryItem> itemsRepository,
-                           CatalogClient catalogClient)
+                           IRepository<InventoryItem> inventoryItemsRepository,
+                           IRepository<CatalogItem> catalogItemsRepository)
     {
         _logger = logger;
-        _itemsRepository = itemsRepository;
-        _catalogClient = catalogClient;
+        _inventoryItemsRepository = inventoryItemsRepository;
+        _catalogItemsRepository = catalogItemsRepository;
     }
     [HttpGet]
     public async Task<ActionResult<IEnumerable<InventoryItemDTO>>> GetAsync(Guid userId)
@@ -31,8 +32,12 @@ public class ItemsController : ControllerBase
         {
             return BadRequest();
         }
-        var catalogItems = await _catalogClient.GetCatalogItemsAsync();
-        var inventoryItemEntities = await _itemsRepository.GetAllByFilterAsync(item => item.UserId == userId);
+        // Get all item belong to the user that have userId
+        var inventoryItemEntities = await _inventoryItemsRepository.GetAllByFilterAsync(item => item.UserId == userId);
+        // Filter the id in the list 
+        var itemIds = inventoryItemEntities.Select(item => item.CatalogItemId);
+        // Take all catalog that the list Ids contains the id
+        var catalogItems = await _catalogItemsRepository.GetAllByFilterAsync(item => itemIds.Contains(item.Id));
 
         var itemsRepositoryDTOs = inventoryItemEntities.Select(inventoryItem =>
         {
@@ -46,7 +51,7 @@ public class ItemsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<InventoryItemDTO>> PostAsync(GrantItemsDTO grantItemsDTO)
     {
-        var inventoryItem = await _itemsRepository.GetByFilterAsync(item => item.UserId == grantItemsDTO.UserId
+        var inventoryItem = await _inventoryItemsRepository.GetByFilterAsync(item => item.UserId == grantItemsDTO.UserId
             && item.CatalogItemId == grantItemsDTO.CatalogItemId);
         InventoryItem updatedItem;
         if (inventoryItem == null)
@@ -58,12 +63,12 @@ public class ItemsController : ControllerBase
                 Quantity = grantItemsDTO.Quantity,
                 AcquireDate = DateTimeOffset.Now
             };
-            updatedItem = await _itemsRepository.CreateAsync(inventoryItem);
+            updatedItem = await _inventoryItemsRepository.CreateAsync(inventoryItem);
         }
         else
         {
             inventoryItem.Quantity += grantItemsDTO.Quantity;
-            updatedItem = await _itemsRepository.UpdateAsync(inventoryItem);
+            updatedItem = await _inventoryItemsRepository.UpdateAsync(inventoryItem);
         }
         return Ok(updatedItem.AsDTO(String.Empty, String.Empty));
 
