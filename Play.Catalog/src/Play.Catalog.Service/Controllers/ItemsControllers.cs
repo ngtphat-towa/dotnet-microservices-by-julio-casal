@@ -58,13 +58,13 @@ namespace Play.Catalog.Service.Controllers
             };
 
             await _itemsRepository.CreateAsync(item);
-
             await _publishEndpoint.Publish(new CatalogItemCreated(ItemId: item.Id, Name: item.Name, Description: item.Description));
+
             return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
         }
         // PUT /items/{:id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(Guid id, UpdateItemDTO updateItemDTO)
+        public async Task<ActionResult<ItemDTO>> PutAsync(Guid id, UpdateItemDTO updateItemDTO)
         {
             var existingItem = await _itemsRepository.GetByIdAsync(id);
             if (existingItem == null)
@@ -76,11 +76,13 @@ namespace Play.Catalog.Service.Controllers
             existingItem.Price = updateItemDTO.Price;
 
             await _itemsRepository.UpdateAsync(existingItem);
-            return Ok();
+            await _publishEndpoint.Publish(new CatalogItemUpdated(ItemId: existingItem.Id, Name: existingItem.Name, Description: existingItem.Description));
+
+            return Ok(existingItem);
         }
         // DELETE /items/{:id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        public async Task<ActionResult<ItemDTO>> DeleteAsync(Guid id)
         {
             var existingItem = await _itemsRepository.GetByIdAsync(id);
             if (existingItem == null)
@@ -89,7 +91,8 @@ namespace Play.Catalog.Service.Controllers
             }
             await _itemsRepository.RemoveAsync(id);
             await _publishEndpoint.Publish(new CatalogItemDeleted(ItemId: id));
-            return Ok();
+
+            return Ok(existingItem);
         }
     }
 }

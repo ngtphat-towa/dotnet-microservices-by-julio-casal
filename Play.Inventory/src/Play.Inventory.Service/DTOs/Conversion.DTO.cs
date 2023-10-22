@@ -1,4 +1,4 @@
-using Play.Inventory.Service.Entites;
+using Play.Inventory.Service.Entities;
 
 namespace Play.Inventory.Service.DTOs;
 

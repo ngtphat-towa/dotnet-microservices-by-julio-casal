@@ -4,7 +4,7 @@ using Polly.Extensions.Http;
 namespace Play.Inventory.Service.Clients;
 public static class ServiceExtensions
 {
-    public static void AddCatalogClient(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCatalogClient(this IServiceCollection services, IConfiguration configuration)
     {
         var url = configuration.GetValue<string>("CatalogEndpoint:BaseUrl")!;
 
@@ -28,5 +28,6 @@ public static class ServiceExtensions
                     .LogWarning($"Closing Circuit ");
             }
         ));
+        return services;
     }
 }

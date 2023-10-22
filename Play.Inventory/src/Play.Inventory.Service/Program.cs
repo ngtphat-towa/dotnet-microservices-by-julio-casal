@@ -2,7 +2,8 @@ using Polly;
 using Play.Common.Extensions;
 using Play.Common.Settings;
 using Play.Inventory.Service.Clients;
-using Play.Inventory.Service.Entites;
+using Play.Inventory.Service.Entities;
+using Play.Common.MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +12,10 @@ var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).
 
 builder.Services
     .AddMongoDatabase()
-    .AddMongoRepository<InventoryItem>("inventoryitems");
-
-
-builder.Services.AddCatalogClient(builder.Configuration);
+    .AddMongoRepository<InventoryItem>("inventoryitems")
+    .AddMongoRepository<CatalogItem>("catalogitems")
+    .AddCatalogClient(builder.Configuration)
+    .AddMassTransitWithRabbitMQ();
 
 // Add services to the container.
 

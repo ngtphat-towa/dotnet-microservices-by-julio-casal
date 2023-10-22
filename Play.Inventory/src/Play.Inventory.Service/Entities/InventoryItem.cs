@@ -1,6 +1,6 @@
 using Play.Common.Entities;
 
-namespace Play.Inventory.Service.Entites;
+namespace Play.Inventory.Service.Entities;
 public class InventoryItem : IEntity
 {
     public Guid Id { get; set; }

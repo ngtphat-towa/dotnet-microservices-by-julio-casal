@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using Play.Common.Repositories;
 using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.DTOs;
-using Play.Inventory.Service.Entites;
+using Play.Inventory.Service.Entities;
 
 namespace Play.Inventory.Service.Controllers;
 
